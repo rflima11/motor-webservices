@@ -1,0 +1,16 @@
+version: '3'
+services:
+
+  jms:
+    container_name: jms
+    image: vromero/activemq-artemis
+    restart: always
+    environment:
+      ARTEMIS_USERNAME: 'rod'
+      ARTEMIS_PASSWORD: '12345'
+    ports:
+      - 61616:61616
+      - 8161:8161
+    expose:
+      - 61616
+      - 8161
