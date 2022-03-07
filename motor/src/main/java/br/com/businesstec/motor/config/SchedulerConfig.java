@@ -1,5 +1,6 @@
 package br.com.businesstec.motor.config;
 
+import br.com.businesstec.motor.service.ControleExecucaoFluxoService;
 import br.com.businesstec.motor.service.ControleNovaTentativaExecucaoFluxo;
 import br.com.businesstec.motor.service.FluxoService;
 import br.com.businesstec.motor.tasks.NovaTentativaFluxoTask;
@@ -22,19 +23,19 @@ public class SchedulerConfig implements SchedulingConfigurer {
     private final FluxoService fluxoService;
     private final ObjectMapper objectMapper;
     private final JmsTemplate jmsTemplate;
-    private final ControleNovaTentativaExecucaoFluxo controleNovaTentativaExecucaoFluxo;
+    private final ControleExecucaoFluxoService controleExecucaoFluxoService;
 
-    public SchedulerConfig(FluxoService fluxoService, ObjectMapper objectMapper, JmsTemplate jmsTemplate, ControleNovaTentativaExecucaoFluxo controleNovaTentativaExecucaoFluxo) {
+    public SchedulerConfig(FluxoService fluxoService, ObjectMapper objectMapper, JmsTemplate jmsTemplate, ControleExecucaoFluxoService controleExecucaoFluxoService) {
         this.fluxoService = fluxoService;
         this.objectMapper = objectMapper;
         this.jmsTemplate = jmsTemplate;
-        this.controleNovaTentativaExecucaoFluxo = controleNovaTentativaExecucaoFluxo;
+        this.controleExecucaoFluxoService = controleExecucaoFluxoService;
     }
 
     @Override
     public void configureTasks(ScheduledTaskRegistrar taskRegistrar) {
-        var fluxo = fluxoService.recuperarFluxosPeloIdCliente(1L).get(0);
-        var tentativa = controleNovaTentativaExecucaoFluxo.registrarNovaTentativa(fluxo.getId());
+        var fluxo = fluxoService.recuperarFluxosPeloIdCliente(1L).get(2);
+        var tentativa = controleExecucaoFluxoService.registrarNovaExecucao(fluxo.getId());
 
         var task = new NovaTentativaFluxoTask(objectMapper, jmsTemplate, tentativa, "queue.fluxo");
         Runnable runnable = () -> System.out.println("Trigger task executed at " + new Date());

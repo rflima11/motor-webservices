@@ -11,4 +11,6 @@ public interface ControleFluxoRepository extends JpaRepository<ControleFluxo, Lo
 
     List<ControleFluxo> findByIdControleCliente(Long idControleCliente);
 
+
+
 }

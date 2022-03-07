@@ -1,5 +1,6 @@
 package br.com.businesstec.motor.tasks;
 
+import br.com.businesstec.motor.model.ControleExecucaoFluxo;
 import br.com.businesstec.motor.model.ControleFluxo;
 import br.com.businesstec.motor.model.ControleFluxoTentativa;
 import br.com.businesstec.motor.service.FluxoService;
@@ -15,21 +16,21 @@ public class NovaTentativaFluxoTask implements Runnable {
 
     private final ObjectMapper objectMapper;
     private final JmsTemplate jmsTemplate;
-    private final ControleFluxoTentativa controleFluxoTentativa;
+    private final ControleExecucaoFluxo controleExecucaoFluxo;
 
     private final String nomeQueue;
 
-    public NovaTentativaFluxoTask(ObjectMapper objectMapper, JmsTemplate jmsTemplate, ControleFluxoTentativa controleFluxoTentativa, String nomeQueue) {
+    public NovaTentativaFluxoTask(ObjectMapper objectMapper, JmsTemplate jmsTemplate, ControleExecucaoFluxo controleExecucaoFluxo, String nomeQueue) {
         this.objectMapper = objectMapper;
         this.jmsTemplate = jmsTemplate;
-        this.controleFluxoTentativa = controleFluxoTentativa;
+        this.controleExecucaoFluxo = controleExecucaoFluxo;
         this.nomeQueue = nomeQueue;
     }
 
     @Override
     public void run() {
         try {
-            var fluxoAsJson = objectMapper.writeValueAsString(controleFluxoTentativa);
+            var fluxoAsJson = objectMapper.writeValueAsString(controleExecucaoFluxo);
             jmsTemplate.convertAndSend(nomeQueue, fluxoAsJson);
         } catch (JsonProcessingException e) {
             logger.fine(e.getMessage());
