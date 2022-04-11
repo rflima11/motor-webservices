@@ -1,7 +1,6 @@
 package br.com.businesstec.motor.model;
 
 import javax.persistence.*;
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 @Entity
@@ -19,14 +18,18 @@ public class ControleExecucaoFluxo {
     @Column(name = "data_hora")
     private LocalDateTime dataHora;
 
-    @Column(name = "id_entidade")
-    private Long idEntidade;
+    @Column(name = "erro")
+    private Boolean erro;
+
+    @Column(name = "descricao_erro")
+    private String descricaoErro;
 
     public ControleExecucaoFluxo() {}
 
-    public ControleExecucaoFluxo(Long idControleFluxo) {
+    public ControleExecucaoFluxo(Long idControleFluxo, LocalDateTime dataHora) {
         this.idControleFluxo = idControleFluxo;
-        dataHora = LocalDateTime.of(2022, 1, 1, 0, 0);
+        this.dataHora = dataHora;
+        this.erro = false;
     }
 
     public Long getId() {
@@ -53,11 +56,19 @@ public class ControleExecucaoFluxo {
         this.dataHora = dataHora;
     }
 
-    public Long getIdEntidade() {
-        return idEntidade;
+    public Boolean getErro() {
+        return erro;
     }
 
-    public void setIdEntidade(Long idEntidade) {
-        this.idEntidade = idEntidade;
+    public void setErro(Boolean erro) {
+        this.erro = erro;
+    }
+
+    public String getDescricaoErro() {
+        return descricaoErro;
+    }
+
+    public void setDescricaoErro(String descricaoErro) {
+        this.descricaoErro = descricaoErro;
     }
 }

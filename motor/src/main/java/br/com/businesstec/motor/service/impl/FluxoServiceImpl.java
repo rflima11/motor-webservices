@@ -1,7 +1,6 @@
 package br.com.businesstec.motor.service.impl;
 
 import br.com.businesstec.motor.model.ControleFluxo;
-import br.com.businesstec.motor.model.ControleFluxoTentativa;
 import br.com.businesstec.motor.repository.ControleFluxoRepository;
 import br.com.businesstec.motor.repository.ControleFluxoTentativaRepository;
 import br.com.businesstec.motor.service.FluxoService;

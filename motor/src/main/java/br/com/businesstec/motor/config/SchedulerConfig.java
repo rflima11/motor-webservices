@@ -1,7 +1,6 @@
 package br.com.businesstec.motor.config;
 
 import br.com.businesstec.motor.service.ControleExecucaoFluxoService;
-import br.com.businesstec.motor.service.ControleNovaTentativaExecucaoFluxo;
 import br.com.businesstec.motor.service.FluxoService;
 import br.com.businesstec.motor.tasks.NovaTentativaFluxoTask;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -13,7 +12,7 @@ import org.springframework.scheduling.annotation.SchedulingConfigurer;
 import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 import org.springframework.scheduling.support.PeriodicTrigger;
 
-import java.util.Date;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 @Configuration
@@ -34,16 +33,16 @@ public class SchedulerConfig implements SchedulingConfigurer {
 
     @Override
     public void configureTasks(ScheduledTaskRegistrar taskRegistrar) {
-        var fluxo = fluxoService.recuperarFluxosPeloIdCliente(1L).get(2);
-        var tentativa = controleExecucaoFluxoService.registrarNovaExecucao(fluxo.getId());
-
-        var task = new NovaTentativaFluxoTask(objectMapper, jmsTemplate, tentativa, "queue.fluxo");
-        Runnable runnable = () -> System.out.println("Trigger task executed at " + new Date());
-        Trigger trigger = (triggerContext) -> {
-            PeriodicTrigger periodicTrigger = new PeriodicTrigger(fluxo.getPeriodicidadeExecucao(), TimeUnit.SECONDS);
-            return periodicTrigger.nextExecutionTime(triggerContext);
+        var fluxo = fluxoService.recuperarFluxosPeloIdCliente(1L);
+        taskRegistrar.setScheduler(Executors.newScheduledThreadPool(3));
+        fluxo.stream().forEach(f -> {
+            var task = new NovaTentativaFluxoTask(objectMapper, jmsTemplate, controleExecucaoFluxoService, f.getId(),"queue.fluxo");
+            Trigger trigger = (triggerContext) -> {
+                PeriodicTrigger periodicTrigger = new PeriodicTrigger(f.getPeriodicidadeExecucao(), TimeUnit.SECONDS);
+                return periodicTrigger.nextExecutionTime(triggerContext);
             };
 
-        taskRegistrar.addTriggerTask(task, trigger);
+            taskRegistrar.addTriggerTask(task, trigger);
+        });
     }
 }

@@ -6,6 +6,8 @@ import br.com.businesstec.motor.service.ControleExecucaoFluxoService;
 import br.com.businesstec.motor.service.ControleFluxoService;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+
 @Service
 public class ControleExecucaoFluxoServiceImpl implements ControleExecucaoFluxoService {
 
@@ -19,9 +21,16 @@ public class ControleExecucaoFluxoServiceImpl implements ControleExecucaoFluxoSe
 
     @Override
     public ControleExecucaoFluxo registrarNovaExecucao(Long idFluxo) {
-        var controleExecucaoFluxo = new ControleExecucaoFluxo(idFluxo);
-        controleExecucaoFluxo.setIdEntidade(controleFluxoService.retornaTipoEntidadePeloIdFluxo(idFluxo));
+        var controleExecucaoFluxo = new ControleExecucaoFluxo(idFluxo, recuperarDataUltimaTentativaBemSucedida(idFluxo));
         return repository.save(controleExecucaoFluxo);
+    }
+
+    private LocalDateTime recuperarDataUltimaTentativaBemSucedida(Long idControleFluxo) {
+        var controleExecucaoFluxoTentativa = repository.findTopByIdControleFluxoAndErroFalseOrderByDataHoraDesc(idControleFluxo);
+        if (controleExecucaoFluxoTentativa.isEmpty()) {
+            return LocalDateTime.now();
+        }
+        return controleExecucaoFluxoTentativa.get().getDataHora();
     }
 
 }

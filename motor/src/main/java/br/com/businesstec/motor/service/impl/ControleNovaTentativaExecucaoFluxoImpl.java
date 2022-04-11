@@ -20,6 +20,6 @@ public class ControleNovaTentativaExecucaoFluxoImpl implements ControleNovaTenta
     @Override
     public ControleFluxoTentativa registrarNovaTentativa(Long idFluxo) {
         var controleExecucaoFluxo = controleExecucaoFluxoService.registrarNovaExecucao(idFluxo);
-        return controleFluxoTentativaRepository.save(new ControleFluxoTentativa(controleExecucaoFluxo.getId()));
+        return controleFluxoTentativaRepository.save(new ControleFluxoTentativa(controleExecucaoFluxo));
     }
 }
