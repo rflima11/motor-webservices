@@ -1,17 +1,34 @@
 package br.com.businesstec.motor.enums;
 
+import java.util.Objects;
+
 public enum ControleAmbienteEnum {
 
-    TOTVS(1),
-    JET(2);
+    TOTVS(1L, "serviceRM"),
+    JET(2L, "serviceJET");
 
-    ControleAmbienteEnum(int value) {
+    ControleAmbienteEnum(Long value, String routingBinding) {
         this.value = value;
+        this.routingBinding = routingBinding;
     }
 
-    Integer value;
+    private Long value;
+    private String routingBinding;
 
-    public Integer getValue() {
+    public static String getBindingByValue(Long value) {
+        for (ControleAmbienteEnum e : values()) {
+            if (Objects.equals(e.value, value)) {
+                return e.getBinding();
+            }
+        }
+        return null;
+    }
+
+    public String getBinding() { return this.routingBinding; }
+
+
+
+    public Long getValue() {
         return value;
     }
 }

@@ -1,9 +1,8 @@
 package br.com.businesstec.motor.service.impl;
 
-import br.com.businesstec.motor.model.ControleExecucaoFluxo;
-import br.com.businesstec.motor.repository.ControleExecucaoFluxoRepository;
+import br.com.businesstec.model.entities.ControleExecucaoFluxo;
+import br.com.businesstec.model.repository.ControleExecucaoFluxoRepository;
 import br.com.businesstec.motor.service.ControleExecucaoFluxoService;
-import br.com.businesstec.motor.service.ControleFluxoService;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -11,11 +10,9 @@ import java.time.LocalDateTime;
 @Service
 public class ControleExecucaoFluxoServiceImpl implements ControleExecucaoFluxoService {
 
-    private final ControleFluxoService controleFluxoService;
     private final ControleExecucaoFluxoRepository repository;
 
-    public ControleExecucaoFluxoServiceImpl(ControleFluxoService controleFluxoService, ControleExecucaoFluxoRepository repository) {
-        this.controleFluxoService = controleFluxoService;
+    public ControleExecucaoFluxoServiceImpl(ControleExecucaoFluxoRepository repository) {
         this.repository = repository;
     }
 

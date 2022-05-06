@@ -1,6 +1,6 @@
 package br.com.businesstec.motor.service;
 
-import br.com.businesstec.motor.model.ControleFluxo;
+import br.com.businesstec.model.entities.ControleFluxo;
 
 import java.util.List;
 

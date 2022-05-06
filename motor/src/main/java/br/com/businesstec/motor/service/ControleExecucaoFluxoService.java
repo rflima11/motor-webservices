@@ -1,6 +1,6 @@
 package br.com.businesstec.motor.service;
 
-import br.com.businesstec.motor.model.ControleExecucaoFluxo;
+import br.com.businesstec.model.entities.ControleExecucaoFluxo;
 
 public interface ControleExecucaoFluxoService {
 

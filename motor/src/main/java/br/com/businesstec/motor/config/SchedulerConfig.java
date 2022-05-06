@@ -4,6 +4,8 @@ import br.com.businesstec.motor.service.ControleExecucaoFluxoService;
 import br.com.businesstec.motor.service.FluxoService;
 import br.com.businesstec.motor.tasks.NovaTentativaFluxoTask;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.amqp.core.DirectExchange;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.scheduling.Trigger;
@@ -20,14 +22,17 @@ import java.util.concurrent.TimeUnit;
 public class SchedulerConfig implements SchedulingConfigurer {
 
     private final FluxoService fluxoService;
-    private final ObjectMapper objectMapper;
-    private final JmsTemplate jmsTemplate;
     private final ControleExecucaoFluxoService controleExecucaoFluxoService;
+    private final RabbitTemplate rabbitTemplate;
+    private final DirectExchange directExchange;
 
-    public SchedulerConfig(FluxoService fluxoService, ObjectMapper objectMapper, JmsTemplate jmsTemplate, ControleExecucaoFluxoService controleExecucaoFluxoService) {
+    public SchedulerConfig(FluxoService fluxoService,
+                           ControleExecucaoFluxoService controleExecucaoFluxoService,
+                           RabbitTemplate rabbitTemplate,
+                           DirectExchange directExchange) {
         this.fluxoService = fluxoService;
-        this.objectMapper = objectMapper;
-        this.jmsTemplate = jmsTemplate;
+        this.rabbitTemplate = rabbitTemplate;
+        this.directExchange = directExchange;
         this.controleExecucaoFluxoService = controleExecucaoFluxoService;
     }
 
@@ -36,7 +41,7 @@ public class SchedulerConfig implements SchedulingConfigurer {
         var fluxo = fluxoService.recuperarFluxosPeloIdCliente(1L);
         taskRegistrar.setScheduler(Executors.newScheduledThreadPool(3));
         fluxo.stream().forEach(f -> {
-            var task = new NovaTentativaFluxoTask(objectMapper, jmsTemplate, controleExecucaoFluxoService, f.getId(),"queue.fluxo");
+            var task = new NovaTentativaFluxoTask(f.getId(), rabbitTemplate, directExchange, controleExecucaoFluxoService, f.getIdControleAmbienteOrigem());
             Trigger trigger = (triggerContext) -> {
                 PeriodicTrigger periodicTrigger = new PeriodicTrigger(f.getPeriodicidadeExecucao(), TimeUnit.SECONDS);
                 return periodicTrigger.nextExecutionTime(triggerContext);

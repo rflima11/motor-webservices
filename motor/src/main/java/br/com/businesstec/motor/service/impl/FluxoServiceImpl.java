@@ -1,8 +1,8 @@
 package br.com.businesstec.motor.service.impl;
 
-import br.com.businesstec.motor.model.ControleFluxo;
-import br.com.businesstec.motor.repository.ControleFluxoRepository;
-import br.com.businesstec.motor.repository.ControleFluxoTentativaRepository;
+import br.com.businesstec.model.entities.ControleFluxo;
+import br.com.businesstec.model.repository.ControleFluxoRepository;
+import br.com.businesstec.model.repository.ControleFluxoTentativaRepository;
 import br.com.businesstec.motor.service.FluxoService;
 import org.springframework.stereotype.Service;
 
