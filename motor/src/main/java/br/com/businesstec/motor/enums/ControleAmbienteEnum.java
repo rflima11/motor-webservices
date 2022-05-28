@@ -5,7 +5,9 @@ import java.util.Objects;
 public enum ControleAmbienteEnum {
 
     TOTVS(1L, "serviceRM"),
-    JET(2L, "serviceJET");
+    JET(2L, "serviceJET"),
+    TOTVS_ENTREGA(3L, "serviceRM.Entrega"),
+    JET_ENTREGA(4L, "serviceJET.Entrega");
 
     ControleAmbienteEnum(Long value, String routingBinding) {
         this.value = value;

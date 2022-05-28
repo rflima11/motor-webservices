@@ -22,7 +22,7 @@ public class FluxoServiceImpl implements FluxoService {
 
     @Override
     public List<ControleFluxo> recuperarFluxosPeloIdCliente(Long idCliente) {
-        return controleFluxoRepository.findByIdControleCliente(idCliente);
+        return controleFluxoRepository.findByIdControleClienteOrderByPeriodicidadeExecucaoDesc(idCliente);
     }
 
 }
