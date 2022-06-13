@@ -10,6 +10,9 @@ import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Configuration
 public class RabbitMQConfig {
 
@@ -18,29 +21,30 @@ public class RabbitMQConfig {
     private static final String ROUTING_JET_ENTREGA = "serviceJET.Entrega";
     private static final String ROUTING_RM_ENTREGA = "serviceRM.Entrega";
 
+    private final Map<String,Object> arguments;
+
+    public RabbitMQConfig() {
+        arguments = getArguments();
+    }
 
     @Bean
     Queue queueRm() {
-        //return QueueBuilder.durable("queue.Rm").singleActiveConsumer().build(); //new Queue("queue.Rm", false);
-        return new Queue("queue.Rm", false);
+        return new Queue("queue.Rm", false, false, false, arguments);
     }
 
     @Bean
     Queue queueJet() {
-       // return QueueBuilder.durable("queue.Jet").singleActiveConsumer().build();
-        return new Queue("queue.Jet", false);
+        return new Queue("queue.Jet", false, false, false, arguments);
     }
 
     @Bean
     Queue queueJetEntrega() {
-    //    return QueueBuilder.durable("queue.Jet.Entrega").singleActiveConsumer().build();
-        return new Queue("queue.Jet.Entrega", false);
+        return new Queue("queue.Jet.Entrega", false, false, false, arguments);
     }
 
     @Bean
     Queue queueRmEntrega() {
-    //    return QueueBuilder.durable("queue.Rm.Entrega").singleActiveConsumer().build();
-        return new Queue("queue.Rm.Entrega", false);
+        return new Queue("queue.Rm.Entrega", false, false, false, arguments);
     }
 
     @Bean
@@ -79,8 +83,16 @@ public class RabbitMQConfig {
     RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory) {
         var rabbitTemplate = new RabbitTemplate(connectionFactory);
         rabbitTemplate.setMessageConverter(messageConverter());
+
         return rabbitTemplate;
 
+    }
+
+    private Map<String, Object> getArguments() {
+     Map<String,Object> arguments = new HashMap<String, Object>();
+     arguments.put("x-single-active-consumer", true);
+     arguments.put("x-message-ttl", 180000);
+     return arguments;
     }
 
 }
