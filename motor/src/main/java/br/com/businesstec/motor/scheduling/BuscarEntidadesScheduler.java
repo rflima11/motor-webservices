@@ -44,17 +44,16 @@ public class BuscarEntidadesScheduler {
             controles.stream().forEach(c -> {
                 var enumIntegracao = IntegraoEnum.getStrategyByIdEntidade(
                         entidadeService.encontrarIdEntidade(c.getIdEntidade()).getIdEntidade());
-                var isIntegrado = controleExecucaoFluxoEntidadeEntregaService.verificarSeRegistroJaFoiIntegrado(c.getIdControleExecucaoFluxo());
+                var isIntegrado = controleExecucaoFluxoEntidadeEntregaService.verificarSeRegistroJaFoiIntegrado(c.getId());
 
                 if (!isIntegrado) {
                     logger.info("NOVO FLUXO A SER INTEGRADO: ID: " + c.getIdControleExecucaoFluxo());
+                    logger.info("ENVIANDO MENSAGENS PARA O SERVICE JET");
+                    rabbitTemplate.convertAndSend(directExchange.getName(), ControleAmbienteEnum.JET_ENTREGA.getBinding(), c);
 
                     if (enumIntegracao == IntegraoEnum.CLIENTES_STRATEGY) {
                         logger.info("ENVIANDO MENSAGENS PARA O SERVICE RM");
                         rabbitTemplate.convertAndSend(directExchange.getName(), ControleAmbienteEnum.TOTVS_ENTREGA.getBinding(), c);
-                    } else {
-                        logger.info("ENVIANDO MENSAGENS PARA O SERVICE JET");
-                        rabbitTemplate.convertAndSend(directExchange.getName(), ControleAmbienteEnum.JET_ENTREGA.getBinding(), c);
                     }
                 }
             });

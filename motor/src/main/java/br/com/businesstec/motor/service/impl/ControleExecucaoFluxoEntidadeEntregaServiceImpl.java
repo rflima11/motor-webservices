@@ -15,6 +15,6 @@ public class ControleExecucaoFluxoEntidadeEntregaServiceImpl implements Controle
 
     @Override
     public boolean verificarSeRegistroJaFoiIntegrado(Long idControleFluxoEntidade) {
-        return repository.existsByIdControleExecucaoFluxoEntidadeAndErroIsFalse(idControleFluxoEntidade);
+        return repository.existsByIdControleExecucaoFluxoEntidade(idControleFluxoEntidade);
     }
 }
