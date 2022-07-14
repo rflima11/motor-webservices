@@ -48,17 +48,27 @@ public class BuscarEntidadesScheduler {
 
                 if (!isIntegrado) {
                     logger.info("NOVO FLUXO A SER INTEGRADO: ID: " + c.getIdControleExecucaoFluxo());
-                    logger.info("ENVIANDO MENSAGENS PARA O SERVICE JET");
-                    rabbitTemplate.convertAndSend(directExchange.getName(), ControleAmbienteEnum.JET_ENTREGA.getBinding(), c);
+
 
                     if (enumIntegracao == IntegraoEnum.CLIENTES_STRATEGY) {
                         logger.info("ENVIANDO MENSAGENS PARA O SERVICE RM");
                         rabbitTemplate.convertAndSend(directExchange.getName(), ControleAmbienteEnum.TOTVS_ENTREGA.getBinding(), c);
+                    } else {
+                        logger.info("ENVIANDO MENSAGENS PARA O SERVICE JET");
+                        rabbitTemplate.convertAndSend(directExchange.getName(), ControleAmbienteEnum.JET_ENTREGA.getBinding(), c);
                     }
+                    controleExecucaoFluxoEntidadeEntregaService.registrarExecucao(c);
                 }
             });
         }
+    }
 
+    public static void main(String[] args) {
+
+
+        String data = "1994-02-02";
+        var match = data.matches("[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])");
+        System.out.println(match);
 
     }
 }
