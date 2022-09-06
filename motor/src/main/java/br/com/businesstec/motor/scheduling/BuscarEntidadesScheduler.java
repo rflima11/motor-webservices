@@ -1,5 +1,6 @@
 package br.com.businesstec.motor.scheduling;
 
+import br.com.businesstec.model.entities.ControleExecucaoFluxoEntidade;
 import br.com.businesstec.motor.enums.ControleAmbienteEnum;
 import br.com.businesstec.motor.enums.IntegraoEnum;
 import br.com.businesstec.motor.service.ControleExecucaoFluxoEntidadeEntregaService;
@@ -10,8 +11,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.DirectExchange;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.retry.annotation.Recover;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
+
+import java.util.Arrays;
 
 @Configuration
 @EnableScheduling
@@ -36,7 +40,6 @@ public class BuscarEntidadesScheduler {
     @Scheduled(fixedRate = 60000)
     public void integrarEntidades() throws InterruptedException {
         var controles = controleExecucaoFluxoEntidadeService.recuperarControlesFluxos();
-
         if (!controles.isEmpty()) {
             logger.info("FORAM ENCONTRADOS " + controles.size() + " REGISTROS NOVOS A SEREM INTEGRADOS");
 
@@ -50,25 +53,16 @@ public class BuscarEntidadesScheduler {
                     logger.info("NOVO FLUXO A SER INTEGRADO: ID: " + c.getIdControleExecucaoFluxo());
 
 
-                    if (enumIntegracao == IntegraoEnum.CLIENTES_STRATEGY) {
+                    if (enumIntegracao == IntegraoEnum.CLIENTES_STRATEGY || enumIntegracao == IntegraoEnum.PEDIDO_STRATEGY) {
                         logger.info("ENVIANDO MENSAGENS PARA O SERVICE RM");
                         rabbitTemplate.convertAndSend(directExchange.getName(), ControleAmbienteEnum.TOTVS_ENTREGA.getBinding(), c);
                     } else {
                         logger.info("ENVIANDO MENSAGENS PARA O SERVICE JET");
                         rabbitTemplate.convertAndSend(directExchange.getName(), ControleAmbienteEnum.JET_ENTREGA.getBinding(), c);
                     }
-                    controleExecucaoFluxoEntidadeEntregaService.registrarExecucao(c);
+                     controleExecucaoFluxoEntidadeEntregaService.registrarExecucao(c);
                 }
             });
         }
-    }
-
-    public static void main(String[] args) {
-
-
-        String data = "1994-02-02";
-        var match = data.matches("[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])");
-        System.out.println(match);
-
     }
 }

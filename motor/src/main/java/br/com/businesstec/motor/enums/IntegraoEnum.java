@@ -9,6 +9,8 @@ public enum IntegraoEnum {
     MARCA_STRATEGY(2L),
     PRODUTO_STRATEGY(1L),
     PRODUTO_SKU_STRATEGY(5L),
+    PEDIDO_STRATEGY(10L),
+    STATUS_PEDIDO_STRATEGY(11L),
     CLIENTES_STRATEGY(9L);
 
     private Long value;
